@@ -11,6 +11,8 @@ main = do
     
 initB = ".b.b.b.b\nb.b.b.b.\n.b.b.b.b\n........\n........\nw.w.w.w.\n.w.w.w.w\nw.w.w.w."
 pl = Plansza (parseGame initB) 12 12
+init2 = ".b.b.b.b\n........\n.b.b.b..\n........\n.....b..\nw.w.w.w.\n.w.w.w.w\nw.w.w.w."
+pl2 = Plansza (parseGame init2) 12 12
 
 
 everyNth lst n = [snd x | x <- zip [1 ..] lst, fst x `mod` n == 0]
@@ -58,12 +60,16 @@ findPositionsInRow row x y = do
 
 --szukanie mozliwych ruchow
 --moves f board = (genKill f b, genMoves f b)
-getElemAt pl x y = pl !! (y-1) !! (x-1) 
-getElemAt2 pl = getElemAt (plansza pl)
+
 
 -- MOVE
 
 -- WYCIAGANIE SASIADOW
+    
+getElem UL = getElemUL
+getElem UR = getElemUR
+getElem DL = getElemDR
+getElem DR = getElemDR
 --up left
 getElemUL _ 1 _ = []
 getElemUL _ _ 1 = []
@@ -83,6 +89,11 @@ getElemDL pla x y = [getElemAt2 pla (x - 1) (y + 1)]
 getElemDR _ _ 8 = []
 getElemDR _ 8 _ = []
 getElemDR pla x y = [getElemAt2 pla (x+1) (y+1)]
+
+getMove UL = getMoveUL
+getMove UR = getMoveUR
+getMove DL = getMoveDL
+getMove DR = getMoveDR
 
 getMoveUL pla x y = do
     let pl = plansza pla
@@ -153,3 +164,26 @@ move pla x y dx dy = do
     Plansza (replace x y (Pole x y Wolne Brak) put) (numB pla) (numW pla)
     
 -- KILLS
+getKillsP pla x y = getKills DL pla x y
+-- ++ getKills DL pla x y ++ getKills DR pla x y
+
+getKillsHelp pla targ land = do
+    when (null land) []
+    -- [(t,land)]
+    -- [t]
+    let nex = uncurry (getKillsP pla) (poleXY (head land))
+    -- [(1,[1]),(1,[2])]
+    if null nex then
+        [(targ, [head land])]
+    else
+        [(fst (head nex), land ++ snd (head nex))]
+        
+getKills::Direction -> Plansza -> Int -> Int -> [(Pole,[Pole])]
+getKills dir pla x y = do
+    let me = getElemAt2 pla x y
+    let targ = getElem dir pla x y
+    when (null targ || (typ (head targ) == Wolne) || (kolor me == kolor (head targ))) []
+    let t = head targ
+    let xy = poleXY t
+    let land = uncurry (getMove dir pla) xy -- move nic nie zwroci jesli nie bedzie miejsca do ladowania
+    getKillsHelp pla t land    

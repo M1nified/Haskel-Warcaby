@@ -1,12 +1,19 @@
 module Stangry where
 import Data.Char
     
-data Kolor = Biale | Czarne | Brak
+data Direction = UL | UR | DL | DR
     deriving (Show, Eq)
+    
 data TypNaDanymPolu = Pionek | Damka | Wolne
     deriving (Show, Eq)
-data Pole = Pole { x :: Int, y :: Int, typ :: TypNaDanymPolu, kolor :: Kolor }
-  deriving (Show)
+data Kolor = Biale | Czarne | Brak
+    deriving (Show, Eq)
+data Pole = Pole {
+    x :: Int, 
+    y :: Int,
+    typ :: TypNaDanymPolu,
+    kolor :: Kolor
+    } deriving (Show)
 -- instance Show Pole where
 --     show Pole{kolor = Biale, typ = Pionek} = show 'w'
 --     show Pole{kolor = Biale, typ = Damka} = show "W"
@@ -29,6 +36,8 @@ tlumaczPole Pole{kolor = Czarne, typ = Pionek} = 'b'
 tlumaczPole Pole{kolor = Czarne, typ = Damka} = 'B'
 tlumaczPole Pole{} = ' '
 
+poleXY Pole{x=x,y=y} = (x,y)
+
 pokazWiersz (num, row) = do
     let str = ' ' : map tlumaczPole row
     let n = intToDigit num
@@ -38,3 +47,9 @@ pokaz pl = do
     let plan = take 8 (plansza pl)
     print (' ' : ' ' : map intToDigit (take 8 [1 ..]))
     mapM pokazWiersz (zip [1..] plan)
+
+-- WYBIERANIE
+getElemAt pl x y = pl !! (y-1) !! (x-1) 
+getElemAt2 pl = getElemAt (plansza pl)
+    
+-- isFree Pole{typ=t} = t == Wolne
