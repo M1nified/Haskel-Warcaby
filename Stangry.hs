@@ -2,7 +2,7 @@ module Stangry where
 import Data.Char
     
 data Kolor = Biale | Czarne | Brak
-    deriving (Show)
+    deriving (Show, Eq)
 data TypNaDanymPolu = Pionek | Damka | Wolne
     deriving (Show, Eq)
 data Pole = Pole { x :: Int, y :: Int, typ :: TypNaDanymPolu, kolor :: Kolor }

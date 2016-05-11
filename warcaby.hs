@@ -1,6 +1,7 @@
 import Data.List.Split
 import Data.List
 import Data.Maybe
+import Control.Monad
 
 import Stangry
 
@@ -59,63 +60,82 @@ findPositionsInRow row x y = do
 --moves f board = (genKill f b, genMoves f b)
 getElemAt pl x y = pl !! (y-1) !! (x-1) 
 getElemAt2 pl = getElemAt (plansza pl)
+
+-- MOVE
+
+-- WYCIAGANIE SASIADOW
 --up left
--- getElemUL _ 1 _ = Just [] 
 getElemUL _ 1 _ = []
 getElemUL _ _ 1 = []
-getElemUL pla x y = do
-  let pl = plansza pla
-  let el = getElemAt pl x y
-  let nel =  getElemAt pl (x-1) (y-1)
-  if  typ nel == Wolne then
-    if typ nel == Damka then
-      nel : getElemUL pla (x - 1) (y - 1)
-    else
-      [nel]
-  else []
+getElemUL pla x y = [getElemAt2 pla (x-1) (y-1)]
+  
 --up right
 getElemUR _ 8 _ = []
 getElemUR _ _ 1 = []
-getElemUR pla x y = do
+getElemUR pla x y = [getElemAt2 pla (x+1) (y-1)]
+    
+--down left
+getElemDL _ _ 8 = []
+getElemDL _ 1 _ = []
+getElemDL pla x y = [getElemAt2 pla (x - 1) (y + 1)]
+
+--down right
+getElemDR _ _ 8 = []
+getElemDR _ 8 _ = []
+getElemDR pla x y = [getElemAt2 pla (x+1) (y+1)]
+
+getMoveUL pla x y = do
     let pl = plansza pla
     let el = getElemAt pl x y
-    let nel = getElemAt pl (x+1) (y-1)
+    let nell = getElemUL pla x y
+    when (null nell) []
+    let nel = head nell
+    if  typ nel == Wolne then
+        if typ nel == Damka then
+        nel : getElemUL pla (x - 1) (y - 1)
+        else
+        [nel]
+    else []
+getMoveUR pla x y = do
+    let pl = plansza pla
+    let el = getElemAt pl x y
+    let nell = getElemUR pla x y
+    when (null nell) []
+    let nel = head nell
     if typ nel == Wolne then
         if typ nel == Damka then
             nel : getElemUR pla (x+1) (y-1)
         else
             [nel]
     else []
---down left
-getElemDL _ _ 8 = []
-getElemDL _ 1 _ = []
-getElemDL pla x y = do
+getMoveDL pla x y = do
     let pl = plansza pla
     let el = getElemAt pl x y
-    let nel = getElemAt pl (x-1) (y+1)
+    let nell = getElemDL pla x y
+    when (null nell) []
+    let nel = head nell
     if typ nel == Wolne then
         if typ nel == Damka then
-            nel : getElemDL pla (x-1) (y+1)
+            nel : getMoveDL pla (x-1) (y+1)
         else
             [nel]
     else []
---down right
-getElemDR _ _ 8 = []
-getElemDR _ 8 _ = []
-getElemDR pla x y = do
+getMoveDR pla x y = do
     let pl = plansza pla
     let el = getElemAt pl x y
-    let nel = getElemAt pl (x+1) (y+1)
+    let nell = getElemDR pla x y
+    when (null nell) []
+    let nel = head nell
     if typ nel == Wolne then
         if typ nel == Damka then
-            nel : getElemDL pla (x+1) (y+1)
+            nel : getElemDR pla (x+1) (y+1)
         else
             [nel]
     else []
 
 genMoves Pole{x=x,y=y,typ=Pionek,kolor=Biale} pl = getElemUL pl x y ++ getElemUR pl x y
-genMoves Pole{x=x,y=y,typ=Pionek,kolor=Czarne} pl = getElemDL pl x y ++ getElemDR pl x y
-genMoves Pole{x=x,y=y,typ=Damka} pl = getElemUL pl x y ++ getElemUR pl x y ++ getElemDL pl x y ++ getElemDR pl x y
+genMoves Pole{x=x,y=y,typ=Pionek,kolor=Czarne} pl = getMoveDL pl x y ++ getElemDR pl x y
+genMoves Pole{x=x,y=y,typ=Damka} pl = getElemUL pl x y ++ getElemUR pl x y ++ getMoveDL pl x y ++ getElemDR pl x y
 
 replaceRow y newrow pl = take (y-1) pl ++ newrow : drop y pl 
 replace x y val pla = do
@@ -131,3 +151,5 @@ move pla x y dx dy = do
     let el = getElemAt pl x y
     let put = Plansza (replace dx dy el pla) (numB pla) (numW pla)
     Plansza (replace x y (Pole x y Wolne Brak) put) (numB pla) (numW pla)
+    
+-- KILLS
