@@ -5,7 +5,7 @@ import Data.Maybe
 import Stangry
 
 main = do
-    pokazPlansze pl
+    pokaz pl
     print pl
     
 initB = ".b.b.b.b\nb.b.b.b.\n.b.b.b.b\n........\n........\nw.w.w.w.\n.w.w.w.w\nw.w.w.w."
