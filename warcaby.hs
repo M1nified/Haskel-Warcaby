@@ -1,5 +1,8 @@
 import Data.List.Split
 import Data.List
+import Data.Maybe
+
+import Stangry
 
 main = do
     pokazPlansze pl
@@ -46,48 +49,85 @@ findPositionsInRow [] _ _ = []
 findPositionsInRow row x y = do
     let t = tail row
     let h = head row
-    let hp = Pole (8-x) (8-y) (typ h) (kolor h)
+    let hp = Pole (9-x) (9-y) (typ h) (kolor h)
     let tp = runFindPositionsInRow t y
     return hp++tp
-
-data Kolor = Biale | Czarne | Brak
-    deriving (Show)
-data TypNaDanymPolu = Pionek | Damka | Wolne
-    deriving (Show)
-data Pole = Pole { x :: Int, y :: Int, typ :: TypNaDanymPolu, kolor :: Kolor }
---   deriving (Show)
-instance Show Pole where
-    show Pole{kolor = Biale, typ = Pionek} = show 'w'
-    show Pole{kolor = Biale, typ = Damka} = show "W"
-    show Pole{kolor = Czarne, typ = Pionek} = show "b"
-    show Pole{kolor = Czarne, typ = Damka} = show "B"
-    show Pole{} = show " "
-    
---plansza to [[Pole]]
-data Plansza = Plansza {
-    plansza :: [[Pole]],
-    numB :: Int,
-    numW :: Int
-    } deriving (Show)
---pokaz plansze
-pokazPlansze pl= mapM print (plansza pl)
 
 --poruszanie 
 
 --szukanie mozliwych ruchow
 --moves f board = (genKill f b, genMoves f b)
--- genMoves::Pole -> Plansza -> Int
 getElemAt pl x y = pl !! (y-1) !! (x-1) 
 getElemAt2 pl = getElemAt (plansza pl)
 --up left
-getElemUL Plansza{plansza=pl} x y = getElemAt pl (x-1) (y-1)
+-- getElemUL _ 1 _ = Just [] 
+getElemUL _ 1 _ = []
+getElemUL _ _ 1 = []
+getElemUL pla x y = do
+  let pl = plansza pla
+  let el = getElemAt pl x y
+  let nel =  getElemAt pl (x-1) (y-1)
+  if  typ nel == Wolne then
+    if typ nel == Damka then
+      nel : getElemUL pla (x - 1) (y - 1)
+    else
+      [nel]
+  else []
 --up right
-getElemUR Plansza{plansza=pl} x y = getElemAt pl (x+1) (y-1)
+getElemUR _ 8 _ = []
+getElemUR _ _ 1 = []
+getElemUR pla x y = do
+    let pl = plansza pla
+    let el = getElemAt pl x y
+    let nel = getElemAt pl (x+1) (y-1)
+    if typ nel == Wolne then
+        if typ nel == Damka then
+            nel : getElemUR pla (x+1) (y-1)
+        else
+            [nel]
+    else []
 --down left
-getElemDL Plansza{plansza=pl} x y = getElemAt pl (x-1) (y+1)
+getElemDL _ _ 8 = []
+getElemDL _ 1 _ = []
+getElemDL pla x y = do
+    let pl = plansza pla
+    let el = getElemAt pl x y
+    let nel = getElemAt pl (x-1) (y+1)
+    if typ nel == Wolne then
+        if typ nel == Damka then
+            nel : getElemDL pla (x-1) (y+1)
+        else
+            [nel]
+    else []
 --down right
-getElemDR Plansza{plansza=pl} x y = getElemAt pl (x+1) (y+1)
+getElemDR _ _ 8 = []
+getElemDR _ 8 _ = []
+getElemDR pla x y = do
+    let pl = plansza pla
+    let el = getElemAt pl x y
+    let nel = getElemAt pl (x+1) (y+1)
+    if typ nel == Wolne then
+        if typ nel == Damka then
+            nel : getElemDL pla (x+1) (y+1)
+        else
+            [nel]
+    else []
 
-genMoves Pole{x=x,y=y,typ=Pionek,kolor=kolor} pl =
-    let r = [] ++ getElemUL pl x y ++ getElemUR pl x y
-    filter () r
+genMoves Pole{x=x,y=y,typ=Pionek,kolor=Biale} pl = getElemUL pl x y ++ getElemUR pl x y
+genMoves Pole{x=x,y=y,typ=Pionek,kolor=Czarne} pl = getElemDL pl x y ++ getElemDR pl x y
+genMoves Pole{x=x,y=y,typ=Damka} pl = getElemUL pl x y ++ getElemUR pl x y ++ getElemDL pl x y ++ getElemDR pl x y
+
+replaceRow y newrow pl = take (y-1) pl ++ newrow : drop y pl 
+replace x y val pla = do
+    let row = plansza pla !! (y - 1)
+    let nr = take (x-1) row ++ val : drop x row
+    replaceRow y nr (plansza pla)
+    
+    
+-- move from x y to destination
+move::Plansza -> Int -> Int -> Int -> Int -> Plansza
+move pla x y dx dy = do
+    let pl = plansza pla
+    let el = getElemAt pl x y
+    let put = Plansza (replace dx dy el pla) (numB pla) (numW pla)
+    Plansza (replace x y (Pole x y Wolne Brak) put) (numB pla) (numW pla)
