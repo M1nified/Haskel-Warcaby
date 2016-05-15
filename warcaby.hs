@@ -147,38 +147,11 @@ getMoveDR pla x y = do
 genMoves Pole{x=x,y=y,typ=Pionek,kolor=Biale} pl = getElemUL pl x y ++ getElemUR pl x y
 genMoves Pole{x=x,y=y,typ=Pionek,kolor=Czarne} pl = getMoveDL pl x y ++ getElemDR pl x y
 genMoves Pole{x=x,y=y,typ=Damka} pl = getElemUL pl x y ++ getElemUR pl x y ++ getMoveDL pl x y ++ getElemDR pl x y
-
-replaceRow y newrow pl = take (y-1) pl ++ newrow : drop y pl 
-replace x y val pla = do
-    let row = plansza pla !! (y - 1)
-    let nr = take (x-1) row ++ val : drop x row
-    replaceRow y nr (plansza pla)
-    
-    
--- move from x y to destination
-move::Plansza -> Int -> Int -> Int -> Int -> Plansza
-move pla x y dx dy = do
-    let pl = plansza pla
-    let el = getElemAt pl x y
-    let put = Plansza (replace dx dy el pla) (numB pla) (numW pla)
-    Plansza (replace x y (Pole x y Wolne Brak) put) (numB pla) (numW pla)
     
 -- KILLS
-getKillsP pla x y = getKills DL pla x y
--- ++ getKills DL pla x y ++ getKills DR pla x y
+getKillsP pla x y = getKills UL pla x y ++ getKills UR pla x y ++ getKills DL pla x y ++ getKills DR pla x y
 
-getKillsHelp pla targ land = do
-    when (null land) []
-    -- [(t,land)]
-    -- [t]
-    let nex = uncurry (getKillsP pla) (poleXY (head land))
-    -- [(1,[1]),(1,[2])]
-    if null nex then
-        [(targ, [head land])]
-    else
-        [(fst (head nex), land ++ snd (head nex))]
-        
-getKills::Direction -> Plansza -> Int -> Int -> [(Pole,[Pole])]
+getKills::Direction -> Plansza -> Int -> Int -> [Plansza]
 getKills dir pla x y = do
     let me = getElemAt2 pla x y
     let targ = getElem dir pla x y
@@ -186,4 +159,20 @@ getKills dir pla x y = do
     let t = head targ
     let xy = poleXY t
     let land = uncurry (getMove dir pla) xy -- move nic nie zwroci jesli nie bedzie miejsca do ladowania
-    getKillsHelp pla t land    
+    when (null land) []
+    let lxy = poleXY (head land)
+    -- [(t,land)]
+    -- [t]
+    let npla1 = uncurry (remove pla) xy
+    let npla = uncurry (move npla1 x y ) lxy
+    let nex = uncurry (getKillsP npla) lxy
+    -- [(1,[1]),(1,[2])]
+    if null nex then
+        [npla]
+    else
+        nex
+    -- if null nex then
+    --     [(t, [head land])]
+    -- else
+    --     [(fst (head nex), land ++ snd (head nex))]
+
