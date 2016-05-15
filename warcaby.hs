@@ -6,8 +6,10 @@ import Control.Monad
 import Stangry
 
 main = do
-    pokaz pl
-    print pl
+    let kk = head (getKillsP pl2 7 6)
+    let k = getKills DL kk 3 2
+    pokaz kk
+    print k
     
 initB = ".b.b.b.b\nb.b.b.b.\n.b.b.b.b\n........\n........\nw.w.w.w.\n.w.w.w.w\nw.w.w.w."
 pl = Plansza (parseGame initB) 12 12
@@ -68,7 +70,7 @@ findPositionsInRow row x y = do
     
 getElem UL = getElemUL
 getElem UR = getElemUR
-getElem DL = getElemDR
+getElem DL = getElemDL
 getElem DR = getElemDR
 --up left
 getElemUL _ 1 _ = []
@@ -155,7 +157,11 @@ getKills::Direction -> Plansza -> Int -> Int -> [Plansza]
 getKills dir pla x y = do
     let me = getElemAt2 pla x y
     let targ = getElem dir pla x y
-    when (null targ || (typ (head targ) == Wolne) || (kolor me == kolor (head targ))) []
+    when (null targ
+        || typ me == Wolne 
+        || (typ (head targ) == Wolne) 
+        || (kolor me == kolor (head targ))
+        ) []
     let t = head targ
     let xy = poleXY t
     let land = uncurry (getMove dir pla) xy -- move nic nie zwroci jesli nie bedzie miejsca do ladowania
@@ -176,3 +182,6 @@ getKills dir pla x y = do
     -- else
     --     [(fst (head nex), land ++ snd (head nex))]
 
+
+k = head (getKillsP pl2 7 6)
+k2 = last (getKillsP pl2 7 6)
