@@ -6,8 +6,8 @@ import Control.Monad
 import Stangry
 
 main = do
-    let kk = head (getKillsP pl2 7 6)
-    let k = getKills DL kk 3 2
+    let kk = head (genKillsP pl2 7 6)
+    let k = genKills DL kk 3 2
     pokaz kk
     print k
     
@@ -146,15 +146,20 @@ getMoveDR pla x y = do
             [nel]
     else []
 
-genMoves Pole{x=x,y=y,typ=Pionek,kolor=Biale} pl = getElemUL pl x y ++ getElemUR pl x y
-genMoves Pole{x=x,y=y,typ=Pionek,kolor=Czarne} pl = getMoveDL pl x y ++ getElemDR pl x y
-genMoves Pole{x=x,y=y,typ=Damka} pl = getElemUL pl x y ++ getElemUR pl x y ++ getMoveDL pl x y ++ getElemDR pl x y
+getMoves Pole{x=x,y=y,typ=Pionek,kolor=Biale} pla = getMoveUL pla x y ++ getMoveUR pla x y
+getMoves Pole{x=x,y=y,typ=Pionek,kolor=Czarne} pla = getMoveDL pla x y ++ getMoveDR pla x y
+getMoves Pole{x=x,y=y,typ=Damka} pla = getMoveUL pla x y ++ getMoveUR pla x y ++ getMoveDL pla x y ++ getMoveDR pla x y
+
+getMovesP pla x y = do
+    let el = getElemAt2 pla x y
+    --el
+    getMoves el pla
     
 -- KILLS
-getKillsP pla x y = getKills UL pla x y ++ getKills UR pla x y ++ getKills DL pla x y ++ getKills DR pla x y
+genKillsP pla x y = genKills UL pla x y ++ genKills UR pla x y ++ genKills DL pla x y ++ genKills DR pla x y
 
-getKills::Direction -> Plansza -> Int -> Int -> [Plansza]
-getKills dir pla x y = do
+genKills::Direction -> Plansza -> Int -> Int -> [Plansza]
+genKills dir pla x y = do
     let me = getElemAt2 pla x y
     let targ = getElem dir pla x y
     when (null targ
@@ -171,7 +176,7 @@ getKills dir pla x y = do
     -- [t]
     let npla1 = uncurry (remove pla) xy
     let npla = uncurry (move npla1 x y ) lxy
-    let nex = uncurry (getKillsP npla) lxy
+    let nex = uncurry (genKillsP npla) lxy
     -- [(1,[1]),(1,[2])]
     if null nex then
         [npla]
@@ -183,5 +188,5 @@ getKills dir pla x y = do
     --     [(fst (head nex), land ++ snd (head nex))]
 
 
-k = head (getKillsP pl2 7 6)
-k2 = last (getKillsP pl2 7 6)
+k = head (genKillsP pl2 7 6)
+k2 = last (genKillsP pl2 7 6)

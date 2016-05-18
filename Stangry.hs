@@ -13,13 +13,13 @@ data Pole = Pole {
     y :: Int,
     typ :: TypNaDanymPolu,
     kolor :: Kolor
-    } --deriving (Show)
-instance Show Pole where
-    show Pole{x=x,y=y,kolor = Biale, typ = Pionek} = show "w" ++ [intToDigit x] ++ [intToDigit y]
-    show Pole{x=x,y=y,kolor = Biale, typ = Damka} = show "W" ++ [intToDigit x] ++ [intToDigit y]
-    show Pole{x=x,y=y,kolor = Czarne, typ = Pionek} = show "b" ++ [intToDigit x] ++ [intToDigit y]
-    show Pole{x=x,y=y,kolor = Czarne, typ = Damka} = show "B" ++ [intToDigit x] ++ [intToDigit y]
-    show Pole{x=x,y=y} = show " " ++ [intToDigit x] ++ [intToDigit y]
+    } deriving (Show)
+-- instance Show Pole where
+--     show Pole{x=x,y=y,kolor = Biale, typ = Pionek} = show "w" ++ [intToDigit x] ++ [intToDigit y]
+--     show Pole{x=x,y=y,kolor = Biale, typ = Damka} = show "W" ++ [intToDigit x] ++ [intToDigit y]
+--     show Pole{x=x,y=y,kolor = Czarne, typ = Pionek} = show "b" ++ [intToDigit x] ++ [intToDigit y]
+--     show Pole{x=x,y=y,kolor = Czarne, typ = Damka} = show "B" ++ [intToDigit x] ++ [intToDigit y]
+--     show Pole{x=x,y=y} = show " " ++ [intToDigit x] ++ [intToDigit y]
     
 --plansza to [[Pole]]
 data Plansza = Plansza {
