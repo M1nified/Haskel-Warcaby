@@ -190,3 +190,14 @@ genKills dir pla x y = do
 
 k = head (genKillsP pl2 7 6)
 k2 = last (genKillsP pl2 7 6)
+
+--genKillsAll::Plansza -> Kolor -> [Plansza]
+genKillsAll pla kol = do
+    let pl = plansza pla
+    mapM (mapM (genKillsAllEach pla kol)) pl
+
+genKillsAllEach::Plansza->Kolor->Pole->Plansza
+genKillsAllEach pla kol pol = if kolor pol == kol then uncurry (genKillsP pla) (poleXY pol) else []
+
+getKillsAll2 pl pla kol = do
+    getKillsAll2Row (head pl) pla kol     
