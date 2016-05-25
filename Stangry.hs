@@ -82,3 +82,22 @@ getElemAt pl x y = pl !! (y-1) !! (x-1)
 getElemAt2 pla = getElemAt (plansza pla)
     
 -- isFree Pole{typ=t} = t == Wolne
+
+--ZNAJDOWANIE POL
+findByColor pla = findByColorRun (plansza pla) pla
+
+findByColorRun [] _ _ = []
+findByColorRun pl pla kol = do
+    let pl2 = plansza pla
+    findByColorRow (head pl) pla kol ++ findByColorRun (tail pl) pla kol     
+    
+findByColorRow row = findByColorRowSingle (length row) row
+
+findByColorRowSingle _ [] _ _ = []
+findByColorRowSingle 1 _ _ _ = []
+findByColorRowSingle x row pla kol = do
+    let el = row !! (x-1)
+    if kolor el == kol then
+        el : findByColorRowSingle (x - 1) row pla kol
+    else
+        findByColorRowSingle (x - 1) row pla kol
