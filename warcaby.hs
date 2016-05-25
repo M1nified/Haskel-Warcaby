@@ -192,12 +192,27 @@ k = head (genKillsP pl2 7 6)
 k2 = last (genKillsP pl2 7 6)
 
 --genKillsAll::Plansza -> Kolor -> [Plansza]
-genKillsAll pla kol = do
-    let pl = plansza pla
-    mapM (mapM (genKillsAllEach pla kol)) pl
+-- genKillsAll pla kol = do
+--     let pl = plansza pla
+--     mapM (mapM (genKillsAllEach pla kol)) pl
 
-genKillsAllEach::Plansza->Kolor->Pole->Plansza
-genKillsAllEach pla kol pol = if kolor pol == kol then uncurry (genKillsP pla) (poleXY pol) else []
+-- genKillsAllEach::Plansza->Kolor->Pole->Plansza
+-- genKillsAllEach pla kol pol = if kolor pol == kol then uncurry (genKillsP pla) (poleXY pol) else []
 
-getKillsAll2 pl pla kol = do
-    getKillsAll2Row (head pl) pla kol     
+findByColorRun pla = findByColor (plansza pla) pla
+
+findByColor [] _ _ = []
+findByColor pl pla kol = do
+    let pl2 = plansza pla
+    findByColorRow (head pl) pla kol ++ findByColor (tail pl) pla kol     
+    
+findByColorRow row = findByColorRowSingle (length row) row
+
+findByColorRowSingle _ [] _ _ = []
+findByColorRowSingle 1 _ _ _ = []
+findByColorRowSingle x row pla kol = do
+    let el = row !! (x-1)
+    if kolor el == kol then
+        el : findByColorRowSingle (x - 1) row pla kol
+    else
+        findByColorRowSingle (x - 1) row pla kol
