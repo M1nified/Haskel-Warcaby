@@ -158,6 +158,8 @@ getMovesP pla x y = do
 -- KILLS
 genKillsP pla x y = genKills UL pla x y ++ genKills UR pla x y ++ genKills DL pla x y ++ genKills DR pla x y
 
+genKillsForPole pla pol = uncurry (genKillsP pla) (poleXY pol)
+
 genKills::Direction -> Plansza -> Int -> Int -> [Plansza]
 genKills dir pla x y = do
     let me = getElemAt2 pla x y
@@ -199,3 +201,14 @@ k2 = last (genKillsP pl2 7 6)
 -- genKillsAllEach::Plansza->Kolor->Pole->Plansza
 -- genKillsAllEach pla kol pol = if kolor pol == kol then uncurry (genKillsP pla) (poleXY pol) else []
 
+getKillsAll pla kol = do
+    let pola = findByColor pla kol
+    concatMap (genKillsForPole pla) pola
+    
+getKillBest pla kol = do
+    let allKills = getKillsAll pla kol
+    findBestKill allKills kol
+    
+findBestKill kills kolor = minimumBy (\a b -> cmpPlanszaForKolor a b kolor) kills
+cmpPlanszaForKolor pla1 pla2 Biale = compare (numB pla1) (numB pla2)
+cmpPlanszaForKolor pla1 pla2 Czarne = compare (numW pla1) (numW pla2)
