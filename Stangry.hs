@@ -102,3 +102,30 @@ findByColorRowSingle x row pla kol = do
         el : findByColorRowSingle (x - 1) row pla kol
     else
         findByColorRowSingle (x - 1) row pla kol
+
+
+-- WYCIAGANIE SASIADOW
+    
+getElem UL = getElemUL
+getElem UR = getElemUR
+getElem DL = getElemDL
+getElem DR = getElemDR
+--up left
+getElemUL _ 1 _ = []
+getElemUL _ _ 1 = []
+getElemUL pla x y = [getElemAt2 pla (x-1) (y-1)]
+  
+--up right
+getElemUR _ 8 _ = []
+getElemUR _ _ 1 = []
+getElemUR pla x y = [getElemAt2 pla (x+1) (y-1)]
+    
+--down left
+getElemDL _ _ 8 = []
+getElemDL _ 1 _ = []
+getElemDL pla x y = [getElemAt2 pla (x - 1) (y + 1)]
+
+--down right
+getElemDR _ _ 8 = []
+getElemDR _ 8 _ = []
+getElemDR pla x y = [getElemAt2 pla (x+1) (y+1)]
