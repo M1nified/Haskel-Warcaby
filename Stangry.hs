@@ -8,6 +8,8 @@ data TypNaDanymPolu = Pionek | Damka | Wolne
     deriving (Show, Eq)
 data Kolor = Biale | Czarne | Brak
     deriving (Show, Eq)
+inverse Biale = Czarne
+inverse Czarne = Biale
 data Pole = Pole {
     x :: Int, 
     y :: Int,
@@ -76,6 +78,8 @@ move pla x y dx dy = do
     let nel = Pole dx dy (typ el) (kolor el)
     let put = Plansza (replace dx dy nel pla) (numB pla) (numW pla)
     Plansza (replace x y (Pole x y Wolne Brak) put) (numB pla) (numW pla)
+moveF2F::Plansza->Pole->Pole->Plansza
+moveF2F pla Pole{x=x1,y=y1} Pole{x=x2,y=y2} = move pla x1 y1 x2 y2
 
 -- WYBIERANIE
 getElemAt pl x y = pl !! (y-1) !! (x-1) 

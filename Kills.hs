@@ -21,11 +21,12 @@ genKills dir pla x y = do
     let xy = poleXY t
     let land = uncurry (getMove dir pla) xy -- move nic nie zwroci jesli nie bedzie miejsca do ladowania
     when (null land) []
-    let lxy = poleXY (head land)
+    let lxy = poleXY (fst (head land))
     -- [(t,land)]
     -- [t]
     let npla1 = uncurry (remove pla) xy
     let npla = uncurry (move npla1 x y ) lxy
+    -- let npla = snd (head land)
     let nex = uncurry (genKillsP npla) lxy
     -- [(1,[1]),(1,[2])]
     if null nex then

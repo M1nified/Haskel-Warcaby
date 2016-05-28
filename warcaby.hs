@@ -6,6 +6,7 @@ import Control.Monad
 import Stangry
 import Moves
 import Kills
+import Generation
 
 main = do
     let kk = head (genKillsP pl2 7 6)
@@ -15,7 +16,7 @@ main = do
     
 initB = ".b.b.b.b\nb.b.b.b.\n.b.b.b.b\n........\n........\nw.w.w.w.\n.w.w.w.w\nw.w.w.w."
 pl = Plansza (parseGame initB) 12 12
-init2 = ".b.b.b.b\n........\n.b.b.b..\n........\n.....b..\nW.w.w.w.\n.w.w.w.w\nw.w.w.w."
+init2 = ".b.b.b.b\n........\n.b.b.b..\n........\n.....b..\nW.w.w.w.\n...w.w.w\nw.w.w.w."
 pl2 = Plansza (parseGame init2) 12 12
 
 k = head (genKillsP pl2 7 6)
