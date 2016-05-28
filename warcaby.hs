@@ -45,7 +45,3 @@ parseGame l = do
     let pl = map (\y -> map (\x -> parseElemXY (snd x) (fst x) (fst y) ) $ snd y) rows
     Plansza pl (length $ findByColorRun pl Czarne) (length $ findByColorRun pl Biale)
     
---poruszanie 
-
---szukanie mozliwych ruchow
---moves f board = (genKill f b, genMoves f b)

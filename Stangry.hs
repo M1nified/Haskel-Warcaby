@@ -9,6 +9,7 @@ data TypNaDanymPolu = Pionek | Damka | Wolne
     deriving (Show, Eq)
 data Kolor = Biale | Czarne | Brak
     deriving (Show, Eq)
+inverse::Kolor->Kolor
 inverse Biale = Czarne
 inverse Czarne = Biale
 data Pole = Pole {
@@ -16,7 +17,7 @@ data Pole = Pole {
     y :: Int,
     typ :: TypNaDanymPolu,
     kolor :: Kolor
-    } --deriving (Show)
+    } deriving (Eq)
 instance Show Pole where
     show Pole{x=x,y=y,kolor = Biale, typ = Pionek} = show "w" ++ [intToDigit x] ++ [intToDigit y]
     show Pole{x=x,y=y,kolor = Biale, typ = Damka} = show "W" ++ [intToDigit x] ++ [intToDigit y]
@@ -24,13 +25,17 @@ instance Show Pole where
     show Pole{x=x,y=y,kolor = Czarne, typ = Damka} = show "B" ++ [intToDigit x] ++ [intToDigit y]
     show Pole{x=x,y=y} = show " " ++ [intToDigit x] ++ [intToDigit y]
     
+
+count pla Biale = numW pla
+count pla Czarne = numB pla
 --plansza to [[Pole]]
 data Plansza = Plansza {
     plansza :: [[Pole]],
     numB :: Int,
     numW :: Int
-    } deriving (Show)
-    
+    } deriving (Eq)
+instance Show Plansza where
+    show = toStr
 --pokaz plansze
 tlumaczPole::Pole -> Char
 tlumaczPole Pole{kolor = Biale, typ = Pionek} = 'w'
@@ -46,11 +51,19 @@ pokazWiersz (num, row) = do
     let n = intToDigit num
     let line = n : str
     print line
-pokaz pl = do 
-    let plan = take 8 (plansza pl)
+pokaz pla = do 
+    let plan = take 8 (plansza pla)
     print (' ' : ' ' : map intToDigit (take 8 [1 ..]))
     mapM_ pokazWiersz (zip [1 ..] plan)
     print (' ' : ' ' : map intToDigit (take 8 [1 ..]))
+    
+toStrRow (num,row) = do
+    let str = ' ' : map tlumaczPole row
+    let n = intToDigit num
+    n : str ++ "\n"
+toStr pla = do
+    let plan = take 8 (plansza pla)
+    (' ' : ' ' : map intToDigit (take 8 [1 ..])) ++ "\n" ++ concatMap toStrRow (zip [1 ..] plan) ++ (' ' : ' ' : map intToDigit (take 8 [1 ..])) ++ "\n"
     
 
 -- ZMIENIANIE
@@ -95,8 +108,9 @@ findByColor::Plansza->Kolor->[Pole]
 findByColor pla = findByColorRun (plansza pla)
 
 findByColorRun::[[Pole]]->Kolor->[Pole]
+findByColorRun [[]] _ = []
 findByColorRun [] _ = []
-findByColorRun pls kol = concatMap (filter (\x -> kolor x == kol) ) pls
+findByColorRun pls kol = concatMap (filter $ \x -> kolor x == kol ) pls
 
 
 -- WYCIAGANIE SASIADOW

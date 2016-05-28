@@ -50,6 +50,7 @@ getKillsAll pla kol = concatMap (genKillsForPole pla) $ findByColor pla kol
     
 getKillBest pla kol = [findBestKill (getKillsAll pla kol) kol]
     
-findBestKill kills kolor = minimumBy (\a b -> cmpPlanszaForKolor a b kolor) kills
+findBestKill [] _ = []
+findBestKill kills kolor = [minimumBy (\a b -> cmpPlanszaForKolor a b kolor) kills]
 cmpPlanszaForKolor pla1 pla2 Biale = compare (numB pla1) (numB pla2)
 cmpPlanszaForKolor pla1 pla2 Czarne = compare (numW pla1) (numW pla2)
