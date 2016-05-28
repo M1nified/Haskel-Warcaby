@@ -4,10 +4,6 @@ import Moves
 import Control.Monad
 import Data.List
 -- KILLS
-genKillsP pla x y = genKills UL pla x y ++ genKills UR pla x y ++ genKills DL pla x y ++ genKills DR pla x y
-
-genKillsForPole pla pol = uncurry (genKillsP pla) (poleXY pol)
-
 genKills::Direction -> Plansza -> Int -> Int -> [Plansza]
 genKills dir pla x y = do
     let me = getElemAt2 pla x y
@@ -37,7 +33,10 @@ genKills dir pla x y = do
     --     [(t, [head land])]
     -- else
     --     [(fst (head nex), land ++ snd (head nex))]
+    
+genKillsP pla x y = genKills UL pla x y ++ genKills UR pla x y ++ genKills DL pla x y ++ genKills DR pla x y
 
+genKillsForPole pla pol = uncurry (genKillsP pla) (poleXY pol)
 
 --genKillsAll::Plansza -> Kolor -> [Plansza]
 -- genKillsAll pla kol = do
@@ -47,13 +46,9 @@ genKills dir pla x y = do
 -- genKillsAllEach::Plansza->Kolor->Pole->Plansza
 -- genKillsAllEach pla kol pol = if kolor pol == kol then uncurry (genKillsP pla) (poleXY pol) else []
 
-getKillsAll pla kol = do
-    let pola = findByColor pla kol
-    concatMap (genKillsForPole pla) pola
+getKillsAll pla kol = concatMap (genKillsForPole pla) $ findByColor pla kol
     
-getKillBest pla kol = do
-    let allKills = getKillsAll pla kol
-    findBestKill allKills kol
+getKillBest pla kol = [findBestKill (getKillsAll pla kol) kol]
     
 findBestKill kills kolor = minimumBy (\a b -> cmpPlanszaForKolor a b kolor) kills
 cmpPlanszaForKolor pla1 pla2 Biale = compare (numB pla1) (numB pla2)

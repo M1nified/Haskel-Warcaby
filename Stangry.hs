@@ -1,4 +1,5 @@
 module Stangry where
+import Control.Monad
 import Data.Char
     
 data Direction = UL | UR | DL | DR
@@ -60,10 +61,12 @@ replace x y val pla = do
     let nr = take (x-1) row ++ val : drop x row
     replaceRow y nr (plansza pla)
 
+-- remove Plansza{plansza=[],numB=b,numW=w} _ _ = Plansza [] b w
 remove pla x y = do
     let el = getElemAt2 pla x y
     --dopisac odejmowanie z licznika
     let pl = replace x y (Pole x y Wolne Brak) pla
+    -- when (null pl) pla
     let nums = decNum pla el
     uncurry (Plansza pl) nums
 
@@ -88,24 +91,12 @@ getElemAt2 pla = getElemAt (plansza pla)
 -- isFree Pole{typ=t} = t == Wolne
 
 --ZNAJDOWANIE POL
-findByColor pla = findByColorRun (plansza pla) pla
+findByColor::Plansza->Kolor->[Pole]
+findByColor pla = findByColorRun (plansza pla)
 
-findByColorRun [] _ _ = []
-findByColorRun pl pla kol = do
-    let pl2 = plansza pla
-    findByColorRow (head pl) pla kol ++ findByColorRun (tail pl) pla kol     
-    
-findByColorRow row = findByColorRowSingle (length row) row
-
---to mozna zmienic na mapy
-findByColorRowSingle _ [] _ _ = []
-findByColorRowSingle 1 _ _ _ = []
-findByColorRowSingle x row pla kol = do
-    let el = row !! (x-1)
-    if kolor el == kol then
-        el : findByColorRowSingle (x - 1) row pla kol
-    else
-        findByColorRowSingle (x - 1) row pla kol
+findByColorRun::[[Pole]]->Kolor->[Pole]
+findByColorRun [] _ = []
+findByColorRun pls kol = concatMap (filter (\x -> kolor x == kol) ) pls
 
 
 -- WYCIAGANIE SASIADOW

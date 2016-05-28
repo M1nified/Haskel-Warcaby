@@ -38,4 +38,4 @@ getMovesAll pla kol = do
     concatMap (`getMoves` pla) pola
     
 getMovesAllBrds::Plansza->Kolor->[Plansza]
-getMovesAllBrds pla kol = map (\x -> snd x) (getMovesAll pla kol)
+getMovesAllBrds pla kol = map snd (getMovesAll pla kol)
