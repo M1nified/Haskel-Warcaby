@@ -47,3 +47,17 @@ parseGame l = do
     let pl = map (\y -> map (\x -> parseElemXY (snd x) (fst x) (fst y) ) $ snd y) rows
     Plansza pl (length $ findByColorRun pl Czarne) (length $ findByColorRun pl Biale)
     
+    
+gameStart pla = play pla Biale
+    
+play pla kol = playMove pla (getTheMoveP pla kol) kol
+   
+playMove prevpla plas kol = do
+    let pla = head plas
+    if null plas then
+        if kol == Biale then -- wygraly czarne
+            putStrLn $ "KONIEC, wygraly CZARNE\n" ++ toStr prevpla
+        else -- wygraly biale
+            putStrLn $ "KONIEC, wygraly BIALE\n" ++ toStr prevpla
+    else
+        play pla (inverse kol)

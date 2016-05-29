@@ -4,9 +4,11 @@ import Data.Char
 
 type MoveResult = (Plansza,Int,[Plansza]) 
 type SearchResult = (Int,[Plansza])
+type MoveP = (Plansza,Plansza)
 
 get3o3 (_,_,x) = x
 get2o3 (_,x,_) = x
+get1o3 (x,_,_) = x
 
 data Direction = UL | UR | DL | DR
     deriving (Show, Eq)

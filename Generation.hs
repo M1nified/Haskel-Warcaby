@@ -6,6 +6,7 @@ import Moves
 import Control.Monad
 import Data.List
 import Data.Char
+import Data.Function
 import Debug.Trace
 
 genGeneration pla = genGenerationsFromArrRun [pla] 1000
@@ -68,17 +69,9 @@ findWinner2::MoveResult->Kolor->Bool
 findWinner2 (pla,-1,_) kol = ifWins pla kol
 findWinner2 mr kol = ifAnyWins (get3o3 mr) kol
 findWinner3::[MoveResult]->[MoveResult]
-findWinner3 mrs = [maximumBy (\a b -> compare (get2o3 a) (get2o3 b)) mrs]
-
--- getTheMoveP::Plansza -> Kolor -> Plansza
-getTheMoveP pla kol = do
-    let mrs = genGenerationsN pla 5 kol
-    let win = findWinner mrs kol
-    let step = findBestDecision mrs kol
-    if not (null win) then
-        win
-    else
-        step
+findWinner3 [] = []
+findWinner3 mrs = [maximumBy (compare `on` get2o3) mrs] 
+--(\a b -> compare (get2o3 a) (get2o3 b))
         
 findBestDecision::[MoveResult]->Kolor->[MoveResult]
 findBestDecision [] _ = []
@@ -88,3 +81,23 @@ cmpMoveResults mr1 mr2 kol = do
     let r2 = findBestKill (get3o3 mr2) kol
     compare 1 2
     -- cmpPlanszaForKolor (head r1) (head r2) kol
+    
+getBestMR::Plansza->Kolor->[MoveResult]
+getBestMR pla kol = do
+    let mrs = genGenerationsN pla 6 kol
+    let win = findWinner mrs kol
+    let step = findBestDecision mrs kol
+    if not (null win) then
+        win
+    else
+        step
+    
+getTheMovePP::Plansza -> Kolor -> [MoveP]
+getTheMovePP pla kol = do
+    let mrs = getBestMR pla kol
+    [(pla, get1o3 $ head mrs) | not (null mrs)]
+    
+getTheMoveP::Plansza->Kolor->[Plansza]
+getTheMoveP pla kol = do
+    let ms = getTheMovePP pla kol
+    [snd (head ms) | not (null ms)]
