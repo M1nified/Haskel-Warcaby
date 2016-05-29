@@ -18,6 +18,8 @@ initB = ".b.b.b.b\nb.b.b.b.\n.b.b.b.b\n........\n........\nw.w.w.w.\n.w.w.w.w\nw
 pl = parseGame initB
 init2 = ".b.b.b.b\n........\n.b.b.b..\n........\n.....b..\nW.w.w.w.\n...w.w.w\nw.w.w.w."
 pl2 = parseGame init2
+init3 = "........\n........\n........\n........\n.....b..\nW.w.w.w.\n...w.w.w\nw.w.w.w."
+pl3 = parseGame init3
 
 k = head (genKillsP pl2 7 6)
 k2 = last (genKillsP pl2 7 6)

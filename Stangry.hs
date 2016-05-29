@@ -1,7 +1,13 @@
 module Stangry where
 import Control.Monad
 import Data.Char
-    
+
+type MoveResult = (Plansza,Int,[Plansza]) 
+type SearchResult = (Int,[Plansza])
+
+get3o3 (_,_,x) = x
+get2o3 (_,x,_) = x
+
 data Direction = UL | UR | DL | DR
     deriving (Show, Eq)
     
