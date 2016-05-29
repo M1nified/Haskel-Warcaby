@@ -84,7 +84,7 @@ cmpMoveResults mr1 mr2 kol = do
     
 getBestMR::Plansza->Kolor->[MoveResult]
 getBestMR pla kol = do
-    let mrs = genGenerationsN pla 6 kol
+    let mrs = genGenerationsN pla 10 kol
     let win = findWinner mrs kol
     let step = findBestDecision mrs kol
     if not (null win) then

@@ -146,3 +146,11 @@ getElemDL pla x y = [getElemAt2 pla (x - 1) (y + 1)]
 getElemDR _ _ 8 = []
 getElemDR _ 8 _ = []
 getElemDR pla x y = [getElemAt2 pla (x+1) (y+1)]
+
+swapQueens pla = do
+    let pl = map (map swapQueen) (plansza pla)
+    Plansza pl (numB pla) (numW pla)
+    
+swapQueen Pole{x=x,y=1,kolor=Biale,typ=Pionek} = Pole x 1 Damka Biale 
+swapQueen Pole{x=x,y=8,kolor=Czarne,typ=Pionek} = Pole x 8 Damka Czarne 
+swapQueen pol = pol

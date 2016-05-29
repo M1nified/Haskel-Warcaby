@@ -18,33 +18,29 @@ genKills dir pla x y = do
     let land = uncurry (getMove dir pla) xy -- move nic nie zwroci jesli nie bedzie miejsca do ladowania
     when (null land) []
     let lxy = poleXY (fst (head land))
-    -- [(t,land)]
-    -- [t]
     let npla1 = uncurry (remove pla) xy
-    let npla = uncurry (move npla1 x y ) lxy
-    -- let npla = snd (head land)
+    let npla = swapQueens $ uncurry (move npla1 x y ) lxy
     let nex = uncurry (genKillsP npla) lxy
-    -- [(1,[1]),(1,[2])]
     if null nex then
         [npla]
     else
         nex
-    -- if null nex then
-    --     [(t, [head land])]
-    -- else
-    --     [(fst (head nex), land ++ snd (head nex))]
+
+genDistanceKill::Direction->Plansza->Int->Int->[Plansza]
+genDistanceKill dir pla x y = do
+    let me = getElemAt2 pla x y
+    let next = getElem dir pla x y
+    if not (null next) && typ (head next) == Wolne then
+        uncurry (genDistanceKill dir (moveF2F pla me (head next))) (poleXY (head next))
+    else
+        genKills dir pla x y
     
 genKillsP pla x y = genKills UL pla x y ++ genKills UR pla x y ++ genKills DL pla x y ++ genKills DR pla x y
+genKillsQueenP pla x y = genDistanceKill UL pla x y ++ genDistanceKill UR pla x y ++ genDistanceKill DL pla x y ++ genDistanceKill DR pla x y
 
-genKillsForPole pla pol = uncurry (genKillsP pla) (poleXY pol)
-
---genKillsAll::Plansza -> Kolor -> [Plansza]
--- genKillsAll pla kol = do
---     let pl = plansza pla
---     mapM (mapM (genKillsAllEach pla kol)) pl
-
--- genKillsAllEach::Plansza->Kolor->Pole->Plansza
--- genKillsAllEach pla kol pol = if kolor pol == kol then uncurry (genKillsP pla) (poleXY pol) else []
+genKillsForPole pla Pole{x=x,y=y,typ=Damka} = genKillsQueenP pla x y
+genKillsForPole pla Pole{x=x,y=y} = genKillsP pla x y
+    
 
 getKillsAll pla kol = concatMap (genKillsForPole pla) $ findByColor pla kol
     

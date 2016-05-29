@@ -20,6 +20,10 @@ init2 = ".b.b.b.b\n........\n.b.b.b..\n........\n.....b..\nW.w.w.w.\n...w.w.w\nw
 pl2 = parseGame init2
 init3 = "........\n........\n........\n........\n.....b..\nW.w.w.w.\n...w.w.w\nw.w.w.w."
 pl3 = parseGame init3
+init4 = ".w.w....\n........\n........\n........\n.....b..\nW.w.w.w.\n...w.w.w\nw.w.w.w."
+pl4 = parseGame init4
+init5 = ".b.b.b.b\n........\n.b.b.b..\n........\n.b...b..\nW.w.w.w.\n...w.w.w\nw.w.w.w."
+pl5 = parseGame init5
 
 k = head (genKillsP pl2 7 6)
 k2 = last (genKillsP pl2 7 6)
@@ -54,6 +58,7 @@ play pla kol = playMove pla (getTheMoveP pla kol) kol
    
 playMove prevpla plas kol = do
     let pla = head plas
+    putStrLn $ "Teraz graja: " ++ show kol ++ "\n" ++ toStr prevpla
     if null plas then
         if kol == Biale then -- wygraly czarne
             putStrLn $ "KONIEC, wygraly CZARNE\n" ++ toStr prevpla

@@ -15,7 +15,7 @@ getMove kier pla x y = do
     let nell = getElem kier pla x y
     when (null nell) []
     let nel = head nell
-    let npla = moveF2F pla el nel
+    let npla = swapQueens $ moveF2F pla el nel
     if  typ nel == Wolne && kolor nel == Brak then
         if typ el == Damka then
         (nel,npla) : uncurry (getMove kier pla) (poleXY nel)
