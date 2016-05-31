@@ -1,3 +1,7 @@
+dist*
+build
+.cabal-sandbox
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db

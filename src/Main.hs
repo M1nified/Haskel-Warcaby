@@ -1,3 +1,5 @@
+module Main where
+    
 import Data.List.Split
 import Data.List
 import Data.Maybe
@@ -9,10 +11,7 @@ import Kills
 import Generation
 
 main = do
-    let kk = head (genKillsP pl2 7 6)
-    let k = genKills DL kk 3 2
-    pokaz kk
-    print k
+    gameStart pl
     
 initB = ".b.b.b.b\nb.b.b.b.\n.b.b.b.b\n........\n........\nw.w.w.w.\n.w.w.w.w\nw.w.w.w."
 pl = parseGame initB
