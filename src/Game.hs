@@ -2,8 +2,12 @@ module Game where
     
 import Data.List.Split
 import Data.List
+import Data.Char
 import Data.Maybe
+import Text.Read
 import Control.Monad
+import System.IO
+import Data.Typeable
 
 import Stangry
 import Moves
@@ -69,26 +73,35 @@ moveHum pla kol = do
     if not $ null kls then
         kls
     else
-        uncurry (move pla) getMv 
+        moveHumMake pla getMv
 
+moveHumMake::Plansza->[Int]->[Plansza]
+moveHumMake pla [x1,y1,x2,y2] = [move pla x1 y1 x2 y2]
 
-getMv::(Int,Int,Int,Int)        
+getMv::[Int]        
 getMv = do
-    let inp = getContents
-    if 5 == length inp then
-        parseMv inp
-    else
-        getMv
+    [1,2,3,4]
+-- par = do    
+--     inputjar <- getLine
+--     let a = (read inputjar :: Int)
+--     putStrLn $ show $ typeOf a
+--     putStrLn $ show $ a
+    
+    
 
-parseMv::String->(Int,Int,Int,Int)
-parseMv inp = (inp !! 1, inp !! 2, inp !! 3, inp !! 4)
+parseMv::[Int]->(Int,Int,Int,Int)
+parseMv inp = (head inp, inp !! 1, inp !! 2, inp !! 3)
     
 keepGoing::Plansza->Kolor->Kolor->Plansza
 keepGoing pla kol kolhuman = do
     let npla = if kolhuman == kol then moveHum pla kol else getTheMoveP pla kol
-    keepGoing npla (inverse kol) kolhuman 
+    if not (null npla) then
+        keepGoing (head npla) (inverse kol) kolhuman
+    else
+        Plansza [] 0 0
     
 
 -- gameStart pla kolhuman = do
 --     keepGoing pla kolhuman kolhuman
+    
     

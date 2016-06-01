@@ -43,7 +43,7 @@ genGenerationsFromArr plas cnt kol = do
          else
              genGenerationsFromArr kills (cnt - 1) (inverse kol) 
      else
-         if cnt == 1 || ifAnyWins moves kol then
+         if cnt == 1 || ifAnyWins moves kol || isTooMuch moves then
              [(cnt,moves)]
          else
              genGenerationsFromArr moves (cnt - 1) (inverse kol)
@@ -84,7 +84,7 @@ cmpMoveResults mr1 mr2 kol = do
     
 getBestMR::Plansza->Kolor->[MoveResult]
 getBestMR pla kol = do
-    let mrs = genGenerationsN pla (getDepth pla kol) kol
+    let mrs = genGenerationsN pla 1000 kol
     let win = findWinner mrs kol
     let step = findBestDecision mrs kol
     if not (null win) then
@@ -104,5 +104,8 @@ getTheMoveP pla kol = do
     
 getDepth::Plansza->Kolor->Int
 getDepth pla kol = do
-    let num = 20 - count pla kol
+    let num = 50 - (count pla Biale + count pla Czarne)
     num * 4
+
+isTooMuch::[Plansza]->Bool
+isTooMuch pla = length pla > 100000
