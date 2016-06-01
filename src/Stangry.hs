@@ -33,7 +33,7 @@ instance Show Pole where
     show Pole{x=x,y=y,kolor = Czarne, typ = Damka} = show "B" ++ [intToDigit x] ++ [intToDigit y]
     show Pole{x=x,y=y} = show " " ++ [intToDigit x] ++ [intToDigit y]
     
-
+count::Plansza->Kolor->Int
 count pla Biale = numW pla
 count pla Czarne = numB pla
 --plansza to [[Pole]]

@@ -12,7 +12,7 @@ import Debug.Trace
 genGeneration pla = genGenerationsFromArrRun [pla] 1000
 genGenerationsN pla = genGenerationsFromArrRun [pla]
 
--- genGenerationsFromArrRun::[Plansza]->Int->Kolor->[MoveResult]
+genGenerationsFromArrRun::[Plansza]->Int->Kolor->[MoveResult]
 genGenerationsFromArrRun plas cnt kol = do
     let kills = genGenerKills plas kol
     let moves = genGenerMoves plas kol
@@ -84,7 +84,7 @@ cmpMoveResults mr1 mr2 kol = do
     
 getBestMR::Plansza->Kolor->[MoveResult]
 getBestMR pla kol = do
-    let mrs = genGenerationsN pla 30 kol
+    let mrs = genGenerationsN pla (getDepth pla kol) kol
     let win = findWinner mrs kol
     let step = findBestDecision mrs kol
     if not (null win) then
@@ -101,3 +101,8 @@ getTheMoveP::Plansza->Kolor->[Plansza]
 getTheMoveP pla kol = do
     let ms = getTheMovePP pla kol
     [snd (head ms) | not (null ms)]
+    
+getDepth::Plansza->Kolor->Int
+getDepth pla kol = do
+    let num = 20 - count pla kol
+    num * 4
