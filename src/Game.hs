@@ -40,7 +40,7 @@ parseElemXY 'B' x y = Pole x y Damka Czarne
 parseElemXY 'W' x y = Pole x y Damka Biale
 parseElemXY _ x y = Pole x y Wolne Brak
 
-blowLine line = filter (/= "") (splitOn ""  line)--(\x -> x /= "")
+-- blowLine line = filter (/= "") (splitOn ""  line)--(\x -> x /= "")
 
 parseGame l = do
     let rows = zip [1..] $ map (zip [1..]) $ splitOn "\n" l
