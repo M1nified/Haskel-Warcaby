@@ -47,12 +47,9 @@ parseGame l = do
     let pl = map (\y -> map (\x -> parseElemXY (snd x) (fst x) (fst y) ) $ snd y) rows
     Plansza pl (length $ findByColorRun pl Czarne) (length $ findByColorRun pl Biale)
     
-    
-gameStart pla = play pla Biale
-    
-play pla kol = playMove pla (getTheMoveP pla kol) kol
+playAuto pla kol = playMoveAuto pla (getTheMoveP pla kol) kol
    
-playMove prevpla plas kol = do
+playMoveAuto prevpla plas kol = do
     let pla = head plas
     putStrLn $ "Teraz graja: " ++ show kol ++ "\n" ++ toStr prevpla
     if null plas then
@@ -61,4 +58,37 @@ playMove prevpla plas kol = do
         else -- wygraly biale
             putStrLn $ "KONIEC, wygraly BIALE\n" ++ toStr prevpla
     else
-        play pla (inverse kol)
+        playAuto pla (inverse kol)
+
+gameStartAuto pla = playAuto pla Biale
+
+
+moveHum::Plansza->Kolor->[Plansza]
+moveHum pla kol = do
+    let kls = getKillBestSingle pla kol
+    if not $ null kls then
+        kls
+    else
+        uncurry (move pla) getMv 
+
+
+getMv::(Int,Int,Int,Int)        
+getMv = do
+    let inp = getContents
+    if 5 == length inp then
+        parseMv inp
+    else
+        getMv
+
+parseMv::String->(Int,Int,Int,Int)
+parseMv inp = (inp !! 1, inp !! 2, inp !! 3, inp !! 4)
+    
+keepGoing::Plansza->Kolor->Kolor->Plansza
+keepGoing pla kol kolhuman = do
+    let npla = if kolhuman == kol then moveHum pla kol else getTheMoveP pla kol
+    keepGoing npla (inverse kol) kolhuman 
+    
+
+-- gameStart pla kolhuman = do
+--     keepGoing pla kolhuman kolhuman
+    

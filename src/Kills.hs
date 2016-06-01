@@ -44,7 +44,10 @@ genKillsForPole pla Pole{x=x,y=y} = genKillsP pla x y
 
 getKillsAll pla kol = concatMap (genKillsForPole pla) $ findByColor pla kol
     
+getKillBest::Plansza->Kolor->[[Plansza]]
 getKillBest pla kol = [findBestKill (getKillsAll pla kol) kol]
+getKillBestSingle::Plansza->Kolor->[Plansza]
+getKillBestSingle pla kol = concat $ getKillBest pla kol
     
 findBestKill [] _ = []
 findBestKill kills kolor = [minimumBy (\a b -> cmpPlanszaForKolor a b kolor) kills]

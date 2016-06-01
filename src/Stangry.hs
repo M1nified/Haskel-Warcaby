@@ -6,9 +6,12 @@ type MoveResult = (Plansza,Int,[Plansza])
 type SearchResult = (Int,[Plansza])
 type MoveP = (Plansza,Plansza)
 
-get3o3 (_,_,x) = x
-get2o3 (_,x,_) = x
+get1o3::(a,b,c)->a
 get1o3 (x,_,_) = x
+get2o3::(a,b,c)->b
+get2o3 (_,x,_) = x
+get3o3::(a,b,c)->c
+get3o3 (_,_,x) = x
 
 data Direction = UL | UR | DL | DR
     deriving (Show, Eq)
